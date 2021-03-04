@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(App());
@@ -25,9 +28,6 @@ class HomePage extends StatefulWidget {
 
   HomePage() {
     items = [];
-    items.add(new Item(title: "Item 1", done: false));
-    items.add(new Item(title: "Item 2", done: true));
-    items.add(new Item(title: "Item 3", done: false));
   }
 
   @override
@@ -54,6 +54,23 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       widget.items.removeAt(index);
     });
+  }
+
+  Future load() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var data = preferences.get('data');
+
+    if (data != null) {
+      Iterable decoded = jsonDecode(data);
+      List<Item> result = decoded.map((e) => Item.fromJson(e)).toList();
+      setState(() {
+        widget.items = result;
+      });
+    }
+  }
+
+  _HomePageState() {
+    load();
   }
 
   @override
