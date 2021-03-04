@@ -35,11 +35,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController newTaskController = new TextEditingController();
+
+  void add() {
+    if (newTaskController.text.isEmpty) return;
+    setState(() {
+      widget.items.add(
+        Item(
+          title: newTaskController.text,
+          done: false,
+        ),
+      );
+      newTaskController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Todo List"),
+        title: TextFormField(
+          controller: newTaskController,
+          keyboardType: TextInputType.text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+          ),
+          decoration: InputDecoration(
+              labelText: "Nova Tarefa",
+              labelStyle: TextStyle(color: Colors.white)),
+        ),
       ),
       body: ListView.builder(
         itemCount: widget.items.length,
@@ -56,6 +81,11 @@ class _HomePageState extends State<HomePage> {
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: add,
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
       ),
     );
   }
